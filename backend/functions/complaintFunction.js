@@ -1,0 +1,63 @@
+import Complaint from "../models/complaintModel.js";
+
+
+// CREATE complaint
+export const createComplaint = async (complaintData) => {
+    return await Complaint.create(complaintData);
+};
+
+
+// GET all complaints
+export const getAllComplaints = async () => {
+    return await Complaint.findAll();
+};
+// GET complaint by ID
+export const getComplaintById = async (id) => {
+    return await Complaint.findByPk(id);
+};
+// GET complaints of a particular room
+export const getComplaintsByRoom = async (room_no) => {
+    return await Complaint.findAll({
+        where: {
+            room_no: room_no
+        }
+    });
+};
+
+
+// UPDATE complaint
+export const updateComplaint = async (id, complaintData) => {
+    const complaint = await Complaint.findByPk(id);
+
+    if (!complaint) {
+        return null;
+    }
+    await complaint.update(complaintData);
+    return complaint;
+};
+
+
+// DELETE complaint
+export const deleteComplaint = async (id) => {
+    const complaint = await Complaint.findByPk(id);
+    if (!complaint) {
+        return null;
+    }
+    await complaint.destroy();
+
+    return true;
+};
+
+
+// UPDATE complaint status
+export const updateComplaintStatus = async (id, status) => {
+    const complaint = await Complaint.findByPk(id);
+    if (!complaint) {
+        return null;
+    }
+    await complaint.update({
+        status: status
+    });
+
+    return complaint;
+};

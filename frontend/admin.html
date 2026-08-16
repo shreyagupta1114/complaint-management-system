@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+
+        <h1>Apartment Complaint Management</h1>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="complaint.html">My Complaints</a>
+            <a href="admin.html" class="active">Admin</a>
+        </nav>
+
+    </header>
+
+
+    <!-- Main -->
+    <main>
+
+        <section class="my-complaints">
+
+            <span class="eyebrow">Staff View</span>
+
+            <h2>Admin Dashboard</h2>
+
+            <p>
+                View and manage complaints submitted by all residents.
+            </p>
+
+        </section>
+
+
+        <!-- Search and Filter -->
+        <section class="my-complaints">
+
+            <h2>All Complaints</h2>
+
+            <div class="toolbar">
+
+                <div class="form-group">
+
+                    <label for="search">
+                        Search Complaints
+                    </label>
+
+                    <input
+                        type="text"
+                        id="search"
+                        placeholder="Search by resident name, room or category..."
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="statusFilter">
+                        Filter by Status
+                    </label>
+
+                    <select id="statusFilter">
+
+                        <option value="all">
+                            All
+                        </option>
+
+                        <option value="Pending">
+                            Pending
+                        </option>
+
+                        <option value="In Progress">
+                            In Progress
+                        </option>
+
+                        <option value="Completed">
+                            Completed
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Complaints -->
+        <section class="my-complaints">
+
+            <div id="adminComplaintList">
+
+                <!-- Complaints will be loaded using admin.js -->
+
+                <p>
+                    Loading complaints...
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Complaint detail modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+            <div id="modalBody">
+                <!-- Filled by admin.js -->
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/admin.js"></script>
+
+</body>
+
+</html>
