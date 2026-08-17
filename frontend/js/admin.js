@@ -20,6 +20,13 @@ function priorityChipClass(priority) {
     return "priority-chip medium";
 }
 
+function cardStatusClass(status) {
+    if (status === "Pending") return "card-pending";
+    if (status === "In Progress") return "card-progress";
+    if (status === "Completed") return "card-completed";
+    return "card-pending";
+}
+
 
 // =====================================================
 // 1. GET ALL COMPLAINTS
@@ -76,13 +83,13 @@ function displayComplaints(complaints) {
 
         const card = document.createElement("div");
 
-        card.className = "complaint-card summary-card";
+        card.className = `complaint-card summary-card ${cardStatusClass(complaint.status)}`;
 
         card.innerHTML = `
 
             <div class="summary-info">
                 <h3>${complaint.resident_name}</h3>
-                <p>Resident No: <span class="mono">${complaint.resident_id}</span> &nbsp;·&nbsp; Room ${complaint.room_no}</p>
+                <p>Room: <span class="mono">${complaint.room_no}</span></p>
             </div>
 
             <div class="summary-actions">
@@ -130,7 +137,6 @@ function openComplaintDetails(id) {
         <p class="detail-row">
             <strong>Resident:</strong>
             ${complaint.resident_name}
-            <span class="mono">(ID ${complaint.resident_id})</span>
         </p>
 
         <p class="detail-row">
