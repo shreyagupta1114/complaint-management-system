@@ -1,4 +1,5 @@
 import Complaint from "../models/complaintModel.js";
+import Review from "../models/reviewModel.js";
 
 
 // CREATE complaint
@@ -11,16 +12,26 @@ export const createComplaint = async (complaintData) => {
 export const getAllComplaints = async () => {
     return await Complaint.findAll();
 };
+
 // GET complaint by ID
 export const getComplaintById = async (id) => {
     return await Complaint.findByPk(id);
 };
-// GET complaints of a particular room
-export const getComplaintsByRoom = async (room_no) => {
+
+// GET complaints of a particular room + contact (used for View Status lookup)
+export const getComplaintsByRoom = async (room_no, contact) => {
     return await Complaint.findAll({
         where: {
-            room_no: room_no
-        }
+            room_no: room_no,
+            contact: contact
+        },
+        include: [
+            {
+                model: Review,
+                required: false
+            }
+        ],
+        order: [["date", "DESC"]]
     });
 };
 
@@ -60,4 +71,14 @@ export const updateComplaintStatus = async (id, status) => {
     });
 
     return complaint;
+};
+
+
+// ADD review for a resolved complaint
+export const addComplaintReview = async (complaint_id, rating, comment) => {
+    return await Review.create({
+        complaint_id: complaint_id,
+        rating: rating,
+        comment: comment || null
+    });
 };

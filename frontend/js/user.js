@@ -1,337 +1,98 @@
-const API_URL = "http://localhost:3000/complaints";
+const API_BASE = "http://localhost:3000/api/complaints";
 
-// Temporary resident ID for testing
-const residentId = 101;
+const form = document.getElementById('lookupForm');
+const resultsArea = document.getElementById('resultsArea');
 
+const statusClass = (status) => {
+  if (status === 'Pending') return 'pending';
+  if (status === 'In Progress') return 'in-progress';
+  if (status === 'Completed') return 'completed';
+  return '';
+};
 
-// =====================================================
-// Helpers for styling
-// =====================================================
+const cardClass = (status) => {
+  if (status === 'Pending') return 'card-pending';
+  if (status === 'In Progress') return 'card-progress';
+  if (status === 'Completed') return 'card-completed';
+  return '';
+};
 
-function statusBadgeClass(status) {
-    if (status === "Pending") return "status-badge pending";
-    if (status === "In Progress") return "status-badge in-progress";
-    if (status === "Completed") return "status-badge completed";
-    return "status-badge pending";
-}
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  resultsArea.innerHTML = '';
 
-function priorityChipClass(priority) {
-    if (priority === "Low") return "priority-chip low";
-    if (priority === "High") return "priority-chip high";
-    return "priority-chip medium";
-}
+  const room_no = document.getElementById('room_no').value.trim();
+  const contact = document.getElementById('contact').value.trim();
 
+  try {
+    const res = await fetch(`${API_BASE}/res-complaints/${encodeURIComponent(room_no)}?contact=${encodeURIComponent(contact)}`);
+    const data = await res.json();
 
-// =====================================================
-// 1. SUBMIT COMPLAINT
-// =====================================================
-
-const form = document.getElementById("complaintForm");
-
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const complaint = {
-        resident_name: document.getElementById("resident_name").value,
-        room_no: document.getElementById("room_no").value,
-        contact: document.getElementById("contact").value,
-        category: document.getElementById("category").value,
-        description: document.getElementById("description").value,
-        priority: document.getElementById("priority").value,
-        additional_info: document.getElementById("additional_info").value
-    };
-
-    try {
-        const response = await fetch(`${API_URL}/create`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(complaint)
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || data.message);
-        }
-
-        document.getElementById("message").textContent =
-            "Complaint submitted successfully!";
-
-        form.reset();
-
-        // Reload complaints after submitting
-        loadComplaints();
-
-    } catch (error) {
-        console.error(error);
-
-        document.getElementById("message").textContent =
-            "Failed to submit complaint: " + error.message;
+    if (!res.ok) {
+      resultsArea.innerHTML = `<p class="error-msg">${data.message}</p>`;
+      return;
     }
+
+    data.complaints.forEach((c) => {
+      const card = document.createElement('div');
+      card.className = `complaint-card ${cardClass(c.status)}`;
+      card.innerHTML = `
+        <p><strong>Complaint #${c.id}</strong> — ${c.category}</p>
+        <p>${c.description}</p>
+        <span class="status-badge ${statusClass(c.status)}">${c.status}</span>
+        <p style="font-size:12px;color:#888;">Submitted: ${new Date(c.date).toLocaleDateString()}</p>
+        ${c.status === 'Completed' ? renderReviewSection(c) : ''}
+      `;
+      resultsArea.appendChild(card);
+    });
+  } catch (err) {
+    resultsArea.innerHTML = `<p class="error-msg">Something went wrong. Please try again.</p>`;
+  }
 });
 
-
-// =====================================================
-// 2. GET RESIDENT'S COMPLAINTS
-// =====================================================
-async function loadComplaints() {
-    try {
-        const response = await fetch(`${API_URL}/get-all`);
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message);
-        }
-
-        displayComplaints(data.complaints);
-
-    } catch (error) {
-        console.error(error);
-
-        document.getElementById("complaintList").innerHTML =
-            "<p>Failed to load complaints.</p>";
-    }
-}
-// =====================================================
-// 3. DISPLAY COMPLAINTS
-// =====================================================
-
-function displayComplaints(complaints) {
-
-    const complaintList =
-        document.getElementById("complaintList");
-
-    complaintList.innerHTML = "";
-
-    if (complaints.length === 0) {
-
-        complaintList.innerHTML = `
-            <div class="empty-state">
-                <div class="icon">🗒</div>
-                <p>You haven't filed any tickets yet.</p>
-            </div>
-        `;
-
-        return;
-    }
-
-
-    complaints.forEach((complaint) => {
-
-        const card = document.createElement("div");
-
-        card.className = "complaint-card";
-
-        card.innerHTML = `
-            <span class="${statusBadgeClass(complaint.status)}">
-                ${complaint.status}
-            </span>
-
-            <h3>${complaint.category}</h3>
-
-            <p>
-                <strong>Ticket:</strong>
-                <span class="ticket-id">#${String(complaint.id).padStart(4, "0")}</span>
-            </p>
-
-            <p>
-                <strong>Room:</strong>
-                <span class="mono">${complaint.room_no}</span>
-            </p>
-
-            <p>
-                <strong>Description:</strong>
-                ${complaint.description}
-            </p>
-
-            <p>
-                <strong>Priority:</strong>
-                <span class="${priorityChipClass(complaint.priority)}">${complaint.priority}</span>
-            </p>
-
-            <p>
-                <strong>Date:</strong>
-                <span class="mono">${complaint.date}</span>
-            </p>
-
-            <button onclick="viewComplaint(${complaint.id})">
-                View
-            </button>
-
-            <button class="secondary" onclick="editComplaint(${complaint.id})">
-                Edit
-            </button>
-
-            <button class="danger" onclick="deleteComplaint(${complaint.id})">
-                Delete
-            </button>
-        `;
-
-        complaintList.appendChild(card);
-    });
+function renderReviewSection(c) {
+  const review = c.Review;
+  if (review) {
+    return `<div class="review-box"><em>Your review: ${review.rating}★ — ${review.comment || ''}</em></div>`;
+  }
+  return `
+    <div class="review-box" id="review-box-${c.id}">
+      <button class="secondary" onclick="showReviewForm(${c.id})">Leave a Review</button>
+    </div>
+  `;
 }
 
-
-// =====================================================
-// 4. VIEW ONE COMPLAINT
-// =====================================================
-
-async function viewComplaint(id) {
-
-    try {
-
-        const response = await fetch(
-            `${API_URL}/get/${id}`
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            alert(data.message);
-            return;
-        }
-
-        const complaint = data.complaint;
-
-        alert(`
-Complaint ID: ${complaint.id}
-
-Resident: ${complaint.resident_name}
-
-Room: ${complaint.room_no}
-
-Category: ${complaint.category}
-
-Description: ${complaint.description}
-
-Priority: ${complaint.priority}
-
-Status: ${complaint.status}
-
-Additional Info: ${complaint.additional_info || "None"}
-
-Date: ${complaint.date}
-        `);
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert("Failed to fetch complaint.");
-    }
+function showReviewForm(complaintId) {
+  const box = document.getElementById(`review-box-${complaintId}`);
+  box.innerHTML = `
+    <label>Rate this resolution:</label>
+    <select id="rating-${complaintId}">
+      <option value="5">5 - Excellent</option>
+      <option value="4">4 - Good</option>
+      <option value="3">3 - Okay</option>
+      <option value="2">2 - Poor</option>
+      <option value="1">1 - Very Poor</option>
+    </select>
+    <input type="text" id="comment-${complaintId}" placeholder="Optional comment">
+    <button onclick="submitReview(${complaintId})">Submit Review</button>
+  `;
 }
 
+async function submitReview(complaintId) {
+  const rating = document.getElementById(`rating-${complaintId}`).value;
+  const comment = document.getElementById(`comment-${complaintId}`).value;
 
-// =====================================================
-// 5. EDIT COMPLAINT
-// =====================================================
+  const res = await fetch(`${API_BASE}/${complaintId}/review`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ rating: Number(rating), comment })
+  });
 
-async function editComplaint(id) {
-
-    const newDescription = prompt(
-        "Enter new description:"
-    );
-
-    if (!newDescription) {
-        return;
-    }
-
-    const newPriority = prompt(
-        "Enter priority (Low / Medium / High):"
-    );
-
-    if (!newPriority) {
-        return;
-    }
-
-
-    try {
-
-        const response = await fetch(
-            `${API_URL}/update/${id}`,
-            {
-                method: "PUT",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    description: newDescription,
-                    priority: newPriority
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            alert(data.message);
-            return;
-        }
-
-        alert("Complaint updated successfully!");
-
-        loadComplaints();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert("Failed to update complaint.");
-    }
+  const data = await res.json();
+  if (res.ok) {
+    alert('Thanks for your feedback!');
+    form.dispatchEvent(new Event('submit'));
+  } else {
+    alert(data.message);
+  }
 }
-
-
-// =====================================================
-// 6. DELETE / CANCEL COMPLAINT
-// =====================================================
-
-async function deleteComplaint(id) {
-
-    const confirmDelete = confirm(
-        "Are you sure you want to delete this complaint?"
-    );
-
-    if (!confirmDelete) {
-        return;
-    }
-
-
-    try {
-
-        const response = await fetch(
-            `${API_URL}/delete/${id}`,
-            {
-                method: "DELETE"
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            alert(data.message);
-            return;
-        }
-
-        alert("Complaint deleted successfully!");
-
-        loadComplaints();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert("Failed to delete complaint.");
-    }
-}
-
-
-// =====================================================
-// 7. LOAD COMPLAINTS WHEN PAGE OPENS
-// =====================================================
-
-loadComplaints();

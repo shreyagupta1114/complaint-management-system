@@ -5,8 +5,13 @@ import {
     updateComplaint,
     deleteComplaint,
     updateComplaintStatus,
-    getComplaintsByRoom
+    getComplaintsByRoom,
+    addComplaintReview
 } from "../functions/complaintFunction.js";
+
+// =====================================================
+// RESIDENT - ADD COMPLAINT
+// =====================================================
 
 export const addComplaint = async (req, res) => {
 
@@ -52,16 +57,29 @@ export const addComplaint = async (req, res) => {
 };
 
 // =====================================================
-// RESIDENT - GET COMPLAINTS BY ROOM
+// RESIDENT - GET COMPLAINTS BY ROOM + CONTACT (View Status)
 // =====================================================
 
 export const getResComplaints = async (req, res) => {
 
     try {
 
-        const complaints = await getComplaintsByRoom(
-            req.params.room_no
-        );
+        const { room_no } = req.params;
+        const { contact } = req.query;
+
+        if (!room_no || !contact) {
+            return res.status(400).json({
+                message: "Room number and contact number are required"
+            });
+        }
+
+        const complaints = await getComplaintsByRoom(room_no, contact);
+
+        if (!complaints || complaints.length === 0) {
+            return res.status(404).json({
+                message: "No complaints found for these details"
+            });
+        }
 
         res.status(200).json({
             message: "Complaints fetched successfully",
@@ -245,6 +263,59 @@ export const changeComplaintStatus = async (req, res) => {
 
         res.status(500).json({
             message: "Failed to update complaint status",
+            error: error.message
+        });
+    }
+};
+
+
+// =====================================================
+// RESIDENT - ADD REVIEW (only allowed if status = Completed)
+// =====================================================
+
+export const addReview = async (req, res) => {
+
+    try {
+
+        const { rating, comment } = req.body;
+
+        if (!rating || rating < 1 || rating > 5) {
+            return res.status(400).json({
+                message: "Rating must be between 1 and 5"
+            });
+        }
+
+        const complaint = await getComplaintById(req.params.id);
+
+        if (!complaint) {
+            return res.status(404).json({
+                message: "Complaint not found"
+            });
+        }
+
+        if (complaint.status !== "Completed") {
+            return res.status(400).json({
+                message: "Reviews can only be added for completed complaints"
+            });
+        }
+
+        const review = await addComplaintReview(
+            req.params.id,
+            rating,
+            comment
+        );
+
+        res.status(201).json({
+            message: "Review submitted successfully",
+            review
+        });
+
+    } catch (error) {
+
+        console.error("Add review error:", error);
+
+        res.status(500).json({
+            message: "Failed to submit review",
             error: error.message
         });
     }

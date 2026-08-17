@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/complaints", complaintRoute);
+app.use("/api/complaints", complaintRoute);
 
 const PORT = 3000;
 

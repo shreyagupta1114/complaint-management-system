@@ -1,5 +1,4 @@
-const API_URL = "http://localhost:3000/complaints";
-
+const API_URL = "http://localhost:3000/api/complaints";
 let allComplaints = [];
 
 
