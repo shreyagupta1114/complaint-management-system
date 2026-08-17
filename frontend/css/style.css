@@ -1,31 +1,35 @@
 /* =====================================================
    Apartment Complaint Management — Design Tokens
-   Concept: complaints as "work-order tickets" —
-   the visual language of a maintenance dept.
+   Palette: Calm and Trustworthy — deep teal on cool
+   neutral, property-management SaaS feel.
    ===================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
     /* Color */
-    --ink: #1B2333;
-    --ink-soft: #56606F;
-    --paper: #EEF1F5;
+    --ink: #163934;
+    --ink-soft: #6B7F7C;
+    --paper: #F4F7F6;
     --surface: #FFFFFF;
-    --line: #DDE3EA;
-    --line-strong: #C4CCD6;
+    --line: #DDE7E5;
+    --line-strong: #C3D3D0;
 
-    --amber: #D97706;
-    --amber-dark: #B45309;
-    --amber-soft: #FDF1E1;
+    --teal: #0F766E;
+    --teal-dark: #0B5A54;
+    --teal-soft: #E1F0EE;
+
+    --coral: #F97362;
+    --coral-dark: #D9503F;
+    --coral-soft: #FDE7E3;
 
     /* Status colors */
-    --status-pending-fg: #92400E;
-    --status-pending-bg: #FEF3E2;
-    --status-progress-fg: #1E40AF;
-    --status-progress-bg: #E8EEFE;
-    --status-done-fg: #14532D;
-    --status-done-bg: #E7F6EC;
+    --status-pending-fg: #A66A1E;
+    --status-pending-bg: #FBEED9;
+    --status-progress-fg: #0B5A54;
+    --status-progress-bg: #E1F0EE;
+    --status-done-fg: #2F7A4F;
+    --status-done-bg: #E1F3E7;
 
     /* Type */
     --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
@@ -35,8 +39,8 @@
     /* Shape */
     --radius: 14px;
     --radius-sm: 8px;
-    --shadow: 0 1px 2px rgba(27, 35, 51, 0.04), 0 8px 24px rgba(27, 35, 51, 0.06);
-    --shadow-hover: 0 2px 4px rgba(27, 35, 51, 0.06), 0 14px 32px rgba(27, 35, 51, 0.10);
+    --shadow: 0 1px 2px rgba(22, 57, 52, 0.05), 0 8px 24px rgba(22, 57, 52, 0.07);
+    --shadow-hover: 0 2px 4px rgba(22, 57, 52, 0.07), 0 14px 32px rgba(22, 57, 52, 0.11);
 }
 
 * {
@@ -70,7 +74,7 @@ header {
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 14px;
-    border-bottom: 3px solid var(--amber);
+    border-bottom: 3px solid var(--teal);
 }
 
 header h1 {
@@ -90,8 +94,8 @@ header h1::before {
     justify-content: center;
     width: 34px;
     height: 34px;
-    background: var(--amber);
-    color: var(--ink);
+    background: var(--teal);
+    color: white;
     border-radius: 9px;
     font-size: 19px;
     font-weight: 700;
@@ -103,7 +107,7 @@ nav {
 }
 
 nav a {
-    color: #C9D2DE;
+    color: #AFC4C1;
     text-decoration: none;
     font-family: var(--font-body);
     font-weight: 500;
@@ -120,8 +124,8 @@ nav a:hover {
 }
 
 nav a.active {
-    background-color: rgba(217, 119, 6, 0.16);
-    color: var(--amber);
+    background-color: rgba(15, 118, 110, 0.28);
+    color: #5FC9BE;
 }
 
 /* =====================================================
@@ -167,8 +171,8 @@ main {
     font-size: 12px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--amber-dark);
-    background: var(--amber-soft);
+    color: var(--teal-dark);
+    background: var(--teal-soft);
     padding: 4px 10px;
     border-radius: 999px;
     margin-bottom: 14px;
@@ -201,8 +205,8 @@ main {
     width: 42px;
     height: 42px;
     border-radius: 10px;
-    background: var(--amber-soft);
-    color: var(--amber-dark);
+    background: var(--teal-soft);
+    color: var(--teal-dark);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -262,8 +266,8 @@ main {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--amber);
-    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
 }
 
 .form-group textarea {
@@ -279,7 +283,7 @@ button {
     border: none;
     border-radius: var(--radius-sm);
     cursor: pointer;
-    background-color: var(--amber);
+    background-color: var(--teal);
     color: white;
     font-family: var(--font-body);
     font-weight: 600;
@@ -288,7 +292,7 @@ button {
 }
 
 button:hover {
-    background-color: var(--amber-dark);
+    background-color: var(--teal-dark);
 }
 
 button:active {
@@ -302,18 +306,19 @@ button.secondary {
 }
 
 button.secondary:hover {
-    background-color: var(--paper);
-    border-color: var(--ink-soft);
+    background-color: var(--teal-soft);
+    border-color: var(--teal);
+    color: var(--teal-dark);
 }
 
 button.danger {
     background-color: transparent;
-    color: #B91C1C;
-    border: 1.5px solid #F3D2D2;
+    color: var(--coral-dark);
+    border: 1.5px solid #F5CFC9;
 }
 
 button.danger:hover {
-    background-color: #FDECEC;
+    background-color: var(--coral-soft);
 }
 
 /* =====================================================
@@ -325,12 +330,20 @@ button.danger:hover {
     font-weight: 500;
 }
 
-#message:not(:empty) {
+#message.success {
     padding: 12px 16px;
     border-radius: var(--radius-sm);
     background: var(--status-done-bg);
     color: var(--status-done-fg);
-    border: 1px solid #BFE5CB;
+    border: 1px solid #C5E5D2;
+}
+
+#message.error {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--coral-soft);
+    color: var(--coral-dark);
+    border: 1px solid #F5CFC9;
 }
 
 /* =====================================================
@@ -385,6 +398,18 @@ button.danger:hover {
     color: var(--ink);
     font-weight: 600;
     margin-right: 4px;
+}
+
+.complaint-card.card-pending {
+    border-left-color: var(--status-pending-fg);
+}
+
+.complaint-card.card-progress {
+    border-left-color: var(--status-progress-fg);
+}
+
+.complaint-card.card-completed {
+    border-left-color: var(--status-done-fg);
 }
 
 .complaint-card .ticket-id,
@@ -444,18 +469,18 @@ button.danger:hover {
 }
 
 .priority-chip.low {
-    background: #EAF3EA;
-    color: #2F6B33;
+    background: var(--status-done-bg);
+    color: var(--status-done-fg);
 }
 
 .priority-chip.medium {
-    background: var(--amber-soft);
-    color: var(--amber-dark);
+    background: var(--status-pending-bg);
+    color: var(--status-pending-fg);
 }
 
 .priority-chip.high {
-    background: #FBE4E4;
-    color: #B91C1C;
+    background: var(--coral-soft);
+    color: var(--coral-dark);
 }
 
 /* Admin status control row */
@@ -530,7 +555,7 @@ button.danger:hover {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(27, 35, 51, 0.55);
+    background: rgba(22, 57, 52, 0.55);
     align-items: center;
     justify-content: center;
     padding: 20px;
