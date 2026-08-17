@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>View Complaint Status</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body {
+    background: #f4f6f5;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  .status-page {
+    max-width: 640px;
+    margin: 48px auto;
+    padding: 0 20px;
+  }
+
+  .page-title {
+    color: #1d6d5c;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  /* ---- Lookup Card ---- */
+  .lookup-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    margin-bottom: 24px;
+  }
+
+  .lookup-card h3 {
+    margin: 0 0 4px;
+    font-size: 18px;
+    color: #17392f;
+  }
+
+  .lookup-card .subtitle {
+    color: #7a8a85;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .lookup-form label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #405850;
+    margin-bottom: 6px;
+  }
+
+  .field-group {
+    margin-bottom: 16px;
+  }
+
+  .lookup-form input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #d9e2df;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease;
+  }
+
+  .lookup-form input:focus {
+    outline: none;
+    border-color: #1d6d5c;
+    box-shadow: 0 0 0 3px rgba(29,109,92,0.12);
+  }
+
+  .lookup-form button {
+    width: 100%;
+    background: #1d6d5c;
+    color: #fff;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .lookup-form button:hover {
+    background: #17594b;
+  }
+
+  /* ---- Results ---- */
+  .results-heading {
+    font-size: 15px;
+    font-weight: 600;
+    color: #405850;
+    margin: 0 0 12px 4px;
+  }
+
+  .complaint-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .card-top h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #17392f;
+  }
+
+  .card-top .category-tag {
+    color: #1d6d5c;
+    font-weight: 500;
+  }
+
+  .complaint-desc {
+    color: #52625d;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 12px;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .status-pending   { background: #fdecea; color: #b3261e; }
+  .status-progress  { background: #fff4e0; color: #a15c00; }
+  .status-completed { background: #e6f4ea; color: #1d6d5c; }
+
+  .submitted-date {
+    font-size: 12px;
+    color: #9aa6a2;
+    margin-top: 10px;
+  }
+
+  /* ---- Review section ---- */
+  .review-box {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #eef1f0;
+  }
+
+  .review-box label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #405850;
+    margin-bottom: 8px;
+  }
+
+  .review-box select,
+  .review-box input[type="text"] {
+    padding: 9px 12px;
+    border: 1px solid #d9e2df;
+    border-radius: 7px;
+    font-size: 13px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+
+  .review-box button {
+    background: #1d6d5c;
+    color: #fff;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .review-box button:hover {
+    background: #17594b;
+  }
+
+  .review-given {
+    background: #f5f9f7;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #405850;
+  }
+
+  .review-given strong {
+    color: #1d6d5c;
+  }
+
+  /* ---- States ---- */
+  .empty-state, .error-msg {
+    background: #fff;
+    border-radius: 14px;
+    padding: 32px;
+    text-align: center;
+    color: #7a8a85;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .error-msg {
+    color: #b3261e;
+  }
+</style>
+</head>
+<body>
+
+<div class="status-page">
+
+  <h2 class="page-title">View Complaint Status</h2>
+
+  <div class="lookup-card">
+    <h3>Find your complaint</h3>
+    <p class="subtitle">Enter your details exactly as you did when submitting</p>
+
+    <form id="lookupForm" class="lookup-form">
+
+      <div class="field-group">
+        <label for="resident_name">Resident Name</label>
+        <input type="text" id="resident_name" placeholder="e.g. Rahul Sharma" required>
+      </div>
+
+      <div class="field-group">
+        <label for="room_no">Room / Flat No.</label>
+        <input type="text" id="room_no" placeholder="e.g. B-109" required>
+      </div>
+
+      <div class="field-group">
+        <label for="contact">Contact No.</label>
+        <input type="tel" id="contact" placeholder="e.g. 9876543210" required>
+      </div>
+
+      <button type="submit">View Status</button>
+
+    </form>
+  </div>
+
+  <div id="resultsArea"></div>
+
+</div>
+
+<script src="js/view-status.js"></script>
+</body>
+</html>
