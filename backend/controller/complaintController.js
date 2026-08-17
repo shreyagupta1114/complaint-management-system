@@ -8,14 +8,30 @@ import {
     getComplaintsByRoom
 } from "../functions/complaintFunction.js";
 
-
-// =====================================================
-// RESIDENT - CREATE COMPLAINT
-// =====================================================
-
 export const addComplaint = async (req, res) => {
 
     try {
+
+        const {
+            resident_name,
+            room_no,
+            contact,
+            category,
+            description
+        } = req.body;
+
+        // Basic validation
+        if (
+            !resident_name ||
+            !room_no ||
+            !contact ||
+            !category ||
+            !description
+        ) {
+            return res.status(400).json({
+                message: "Please fill all required fields"
+            });
+        }
 
         const complaint = await createComplaint(req.body);
 
@@ -34,7 +50,6 @@ export const addComplaint = async (req, res) => {
         });
     }
 };
-
 
 // =====================================================
 // RESIDENT - GET COMPLAINTS BY ROOM
